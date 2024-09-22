@@ -16,7 +16,10 @@
 	"postCreateCommand": "python3 -m pip install --upgrade pip && pip install -r requirements.txt && ./tools/bashrc/bashrc_setup.sh",
 
     // runtime arguments
-    "runArgs": ["--network=host"],
+    "runArgs": [
+        "--network=host",
+        "--gpus=all"
+    ],
 
 	// Configure tool-specific properties.
 	"customizations": {
