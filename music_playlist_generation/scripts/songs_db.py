@@ -1,7 +1,27 @@
+"""
+songs_db.py
+
+Description:
+    Cretes a databse of songs
+"""
+
 import pandas as pd
 from pymilvus import connections, utility, FieldSchema, CollectionSchema, DataType, Collection
 
 def define_collection(collection_name="songs_db", desc="Song Database"):
+    """
+    Creates a Collection object for database
+
+    Args:
+        collection_name (str, optional): name for collection in database. Defaults to "songs_db".
+        desc (str, optional): description for collection in database. Defaults to "Song Database".
+
+    Raises:
+        NameError: When the name of database already exists and don't want to overwrite
+
+    Returns:
+        Collection: Collection object for database
+    """
     if utility.has_collection(collection_name):
         new_collection = input(
             f"A collection with name [{collection_name}] already exists, do you wish to overwrite \
@@ -26,6 +46,13 @@ def define_collection(collection_name="songs_db", desc="Song Database"):
     return collection
 
 def data_to_collection(collection, dataframe):
+    """
+    Inserts data from dataframe to collection database
+
+    Args:
+        collection (Collection): A Milvus databse collection object
+        dataframe (DataFrame): Pandas DataFrame with data for songs
+    """
     track_genre = dataframe["track_genre"].to_list()
     danceability_valence = list(zip(
         dataframe["danceability"].to_list(),
@@ -53,11 +80,17 @@ def data_to_collection(collection, dataframe):
     print(insert_result)
 
 def main():
+    """
+    Main Function
+
+    Raises:
+        ConnectionError: When connection to Milvus Database fails
+    """
     try:
         connections.connect("default", host="localhost", port="19530")
         print("Connected to Milvus.")
     except Exception as e:
-        raise ConnectionError(f"Failed to connect to Milvus: {e}")
+        raise ConnectionError(f"Failed to connect to Milvus: {e}") from e
 
     collection = define_collection()
     path = "/workspaces/Music_Playlist_Generation/music_playlist_generation/data/data.csv"
